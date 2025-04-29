@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pig Clicker V4.0</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    </head>
+
+    <body>
+        <div id="button-container">
+            <center>
+                <h1 id="score"></h1>
+                <img id="pig" src="https://pigclicker.codehs.me/images/pig.png">
+                <br><br>
+                <h3 id="per-sec"></h3>
+                <br>
+                <button id="reset"><i class="fa-solid fa-rotate-right"></i></button>
+                <br><br><br>
+                <img class="item" id="item1" src="https://pigclicker.codehs.me/images/item1.png">
+                <br><br><br>
+                <img class="item" id="item2" src="https://pigclicker.codehs.me/images/item2.png">
+                <br><br><br>
+                <img class="item" id="item3" src="https://pigclicker.codehs.me/images/item3.png">
+                <br><br><br>
+                <img class="item" id="item4" src="https://pigclicker.codehs.me/images/item4.png">
+            </center>
+        </div>
+        <script>
+          const pig = document.getElementById('pig');
+const scoreString = document.getElementById('score');
+const perSecAmt = document.getElementById('per-sec');
+const item1 = document.getElementById('item1');
+const item2 = document.getElementById('item2');
+const item3 = document.getElementById('item3');
+const item4 = document.getElementById('item4');
+const pigSound = document.getElementById("pig-sound");
+
+let scoreChangePerSec = 0;
+let scoreAmt = 0;
+let scoreChangePerClick = 1;
+
+// Load data from localStorage
+function loadGame() {
+    const storedScore = localStorage.getItem('scoreAmt');
+    const storedScoreChangePerClick = localStorage.getItem('scoreChangePerClick');
+    const storedScoreChangePerSec = localStorage.getItem('scoreChangePerSec');
+    
+    if (storedScore !== null) scoreAmt = parseInt(storedScore);
+    if (storedScoreChangePerClick !== null) scoreChangePerClick = parseInt(storedScoreChangePerClick);
+    if (storedScoreChangePerSec !== null) scoreChangePerSec = parseInt(storedScoreChangePerSec);
+}
+
+// Save game data to localStorage
+function saveGame() {
+    localStorage.setItem('scoreAmt', scoreAmt);
+    localStorage.setItem('scoreChangePerClick', scoreChangePerClick);
+    localStorage.setItem('scoreChangePerSec', scoreChangePerSec);
+}
+
+// Initial load
+loadGame();
+
+// Update the displayed score initially
+scoreString.textContent = scoreAmt;
+perSecAmt.textContent = 'Per Sec: ' + scoreChangePerSec;
+
+// Click event for the pig
+pig.onclick = function click() {
+    scoreAmt += scoreChangePerClick; // Increment score
+    scoreString.textContent = scoreAmt; // Update displayed score
+    saveGame(); // Save score to localStorage
+};
+
+function triggerShakeAnimation(item) {
+    item.classList.add('shake');
+    // Remove the class after the animation ends to allow it to be applied again later
+    setTimeout(() => {
+        item.classList.remove('shake');
+    }, 500); // Match this duration with the animation duration
+}
+
+// Click event for buying item1
+item1.onclick = function buy1() {
+    if (scoreAmt >= 50) { // Check if enough score to buy
+        scoreAmt -= 50; // Decrement score by 50
+        scoreChangePerClick++; // Increase points per click
+        scoreString.textContent = scoreAmt; // Update displayed score after purchasing
+        saveGame(); // Save score to localStorage
+    } else {
+        triggerShakeAnimation(item1); // Trigger disapproving animation
+    }
+};
+
+// Click event for buying item2
+item2.onclick = function buy2() {
+    if (scoreAmt >= 100) { // Check if enough score to buy
+        scoreAmt -= 100; // Decrement score by 100
+        scoreChangePerSec++; // Increase points per second
+        scoreString.textContent = scoreAmt; // Update displayed score after purchasing
+        perSecAmt.textContent = 'Per Sec: ' + scoreChangePerSec; // Update per second display
+        saveGame(); // Save score to localStorage
+    } else {
+        triggerShakeAnimation(item2); // Trigger disapproving animation
+    }
+};
+
+// Click event for buying item3
+item3.onclick = function buy3() {
+    if (scoreAmt >= 1000) { // Check if enough score to buy
+        scoreAmt -= 1000; // Decrement score by 1000
+        scoreChangePerSec += 8; // Increase points per second
+        scoreString.textContent = scoreAmt; // Update displayed score after purchasing
+        perSecAmt.textContent = 'Per Sec: ' + scoreChangePerSec; // Update per second display
+        saveGame(); // Save score to localStorage
+    } else {
+        triggerShakeAnimation(item3); // Trigger disapproving animation
+    }
+};
+
+// Click event for buying item4
+item4.onclick = function buy4() {
+    if (scoreAmt >= 15000) { // Check if enough score to buy
+        scoreAmt -= 15000; // Decrement score by 15000
+        scoreChangePerSec += 100; // Increase points per second
+        scoreString.textContent = scoreAmt; // Update displayed score after purchasing
+        perSecAmt.textContent = 'Per Sec: ' + scoreChangePerSec; // Update per second display
+        saveGame(); // Save score to localStorage
+    } else {
+        triggerShakeAnimation(item4); // Trigger disapproving animation
+    }
+};
+
+// Function to update score every second
+setInterval(function() {
+    scoreAmt += scoreChangePerSec; // Increase score by change per second
+    scoreString.textContent = scoreAmt; // Update displayed score
+    saveGame(); // Save score to localStorage
+}, 1000); // Update every 1000 milliseconds (1 second)
+const resetButton = document.getElementById('reset'); // Get reference to reset button
+
+// Reset function to reset everything
+function resetGame() {
+    // Show confirmation dialog
+    const confirmReset = window.confirm("Are you sure you want to reset the game? This action cannot be undone.");
+    if (confirmReset) {
+        scoreAmt = 0; // Reset score
+        scoreChangePerClick = 1; // Reset score per click
+        scoreChangePerSec = 0; // Reset score per second
+
+        // Update the displayed score and per second values
+        scoreString.textContent = scoreAmt;
+        perSecAmt.textContent = 'Per Sec: ' + scoreChangePerSec;
+
+        // Clear localStorage
+        localStorage.removeItem('scoreAmt');
+        localStorage.removeItem('scoreChangePerClick');
+        localStorage.removeItem('scoreChangePerSec');
+    }
+}
+
+// Add event listener for reset button
+resetButton.onclick = resetGame;
+        </script>
+      <style>
+        body {
+    background: linear-gradient(to right, purple, orange); /* Gradient from purple to orange */
+    font-family: Arial, sans-serif; /* Added sans-serif as a fallback font */
+}
+
+h1 {
+    font-size: 3.5rem;
+}
+
+#button-container {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    margin-top: 75px;
+    margin-bottom: 200px;
+}
+
+#button-container #pig {
+    width: 200px;
+    height: 200px;
+    transition: transform .4s;
+}
+
+#button-container #pig:hover {
+    transform: scale(1.2);
+}
+
+#button-container .item {
+    transition: transform .4s;
+    border: 5px solid #000;
+    border-radius: 60px;
+}
+
+#button-container .item:hover {
+    transform: scale(1.1);
+}
+
+#button-container #reset {
+    transition: background-color .4s;
+    padding: 10px 20px; /* Combined padding */
+    border: 3px solid darkblue;
+    background-color: blue;
+    border-radius: 5px;
+    color: black;
+    font-size: 1.5rem;
+}
+
+#button-container #reset:hover {
+    background-color: darkblue;
+    color: white; /* Ensure text color changes on hover */
+}
+
+/* CSS for the animation */
+@keyframes shake {
+    transform: scale(1.1);
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+    transform: scale(1.1); /* Ensure scale remains the same during shake */
+}
+      </style>
+    </body>
+</html>
